@@ -22,18 +22,18 @@ FROM openjdk:8-jre-alpine
 RUN apk add --no-cache bash snappy libc6-compat
 
 # Flink environment variables
+ENV FLINK_HOME /opt/flink
+ENV FLINK_DIST flink-1.8.1
 ENV NUM_SLOTS 2
 
-# flink-dist can point to a directory or a tarball on the local system
-ARG flink_dist=flink-1.8.1
 
 # Install build dependencies and flink
-ADD flink-1.8.1 /opt/flink-1.8.1
+ADD $FLINK_DIST /opt/$FLINK_DIST
 RUN set -x && \
-  ln -s /opt/flink-1.8.1 /opt/flink && \
-  addgroup -S flink && adduser -D -S -H -G flink -h /opt/flink flink && \
-  chown -R flink:flink /opt/flink-1.8.1 && \
-  chown -h flink:flink /opt/flink
+  ln -s /opt/$FLINK_DIST $FLINK_HOME && \
+  addgroup -S flink && adduser -D -S -H -G flink -h $ flink && \
+  chown -R flink:flink /opt/$FLINK_DIST && \
+  chown -h flink:flink $FLINK_HOME
 
 COPY docker-entrypoint.sh /
 
