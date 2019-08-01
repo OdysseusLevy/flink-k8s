@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: flink-taskmanager
+    prometheus: mon-app
+  name: flink-taskmanager
+  namespace: intelligence
+spec:
+  endpoints:
+    - interval: 30s
+      targetPort: 8090
+  namespaceSelector:
+    matchNames:
+      - intelligence
+  selector:
+    matchLabels:
+      app: flink
+      component: taskmanager

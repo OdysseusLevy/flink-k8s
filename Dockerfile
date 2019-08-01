@@ -38,6 +38,6 @@ RUN set -x && \
 COPY docker-entrypoint.sh /
 
 USER flink
-EXPOSE 8081 6123
+EXPOSE 8081 8090 6123
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["--help"]
