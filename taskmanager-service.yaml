@@ -12,18 +12,10 @@ spec:
       port: 6123
       protocol: TCP
       targetPort: 6123
-    - name: blob
-      port: 6124
-      protocol: TCP
-      targetPort: 6124
     - name: query
       port: 6125
       protocol: TCP
       targetPort: 6125
-    - name: ui
-      port: 8081
-      protocol: TCP
-      targetPort: 8081
     - name: metrics
       port: 8090
       protocol: TCP

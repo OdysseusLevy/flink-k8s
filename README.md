@@ -6,10 +6,13 @@ This is meant to be a base flink image that works for Kamaji
 
 ## Changes from vanilla Flink
 
-* Configured to support prometheus reporting
+* Changed config to turn on prometheus, and copied prometheus library from opt to lib
 * Added NUM_SLOTS environment variable that controls slots per task machine (this is configurable from k8s)
-* Uses default hadoop libraries
-* Removed docker compose complexity (we only use k8s)
+* Added ServiceMonitor resource to turn on prometheus scraping
+* Added taskmanager service to distinguish between jobmanager and taskmanager pods
+* Set blob.server.port to 6124 (default is random port and that doesn't work with the jobmanager service)
+* Use default hadoop libraries
+* Removed some docker compose complexity (we only use k8s)
 
 ## How to build
 

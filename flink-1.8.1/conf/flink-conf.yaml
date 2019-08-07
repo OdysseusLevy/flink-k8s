@@ -55,9 +55,15 @@ taskmanager.numberOfTaskSlots: 1
 
 parallelism.default: 1
 
+# Turn on prometheus reporting
+
 metrics.reporters: prom
   metrics.reporter.prom.class: org.apache.flink.metrics.prometheus.PrometheusReporter
   metrics.reporter.prom.port: 8090
+
+# Use a fixed blob server port
+
+blob.server.port: 6124
 
 # The default file system scheme and authority.
 # 
