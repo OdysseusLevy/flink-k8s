@@ -14,7 +14,17 @@ This is meant to be a base flink image that works for Kamaji
 * Use default hadoop libraries
 * Removed some docker compose complexity (we only use k8s)
 
-## How to build
+## Build information
+
+The jenkins job is here:
+
+https://one-jenkins.tools.kmb.sonynei.net/job/KMJ-CICD/job/kamaji-flink/job/one-jenkins/
+
+Images are pushed here:
+
+https://kamaji-dtr.tools.kmb.sonynei.net/repositories/raptor/kamaji-flink/tags
+
+## How to build manually
 
 First build the image
 
