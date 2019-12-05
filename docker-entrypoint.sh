@@ -30,6 +30,11 @@ elif [ "$1" == "jobmanager" ]; then
     sed -i -e "s/jobmanager.rpc.address: localhost/jobmanager.rpc.address: ${JOB_MANAGER_RPC_ADDRESS}/g" $FLINK_HOME/conf/flink-conf.yaml
 
     exec $FLINK_HOME/bin/jobmanager.sh start-foreground
+
+    if [ -f "$FLINK_HOME/mnt/start-job.sh" ]; then
+      echo "Starting installed flink job..."
+      exec $FLINK_HOME/mnt/start-job.sh
+    fi
 elif [ "$1" == "taskmanager" ]; then
 
     sed -i -e "s/jobmanager.rpc.address: localhost/jobmanager.rpc.address: ${JOB_MANAGER_RPC_ADDRESS}/g" $FLINK_HOME/conf/flink-conf.yaml
