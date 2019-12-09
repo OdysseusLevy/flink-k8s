@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Sample script to start up a job.
 # Assumes variables JOB_JAR, NUM_SLOTS, and MAIN_CLASS are set. For example:
 # JOB_JAR=$FLINK_HOME/mnt/osiris-events-0.0.62.jar
@@ -7,9 +7,9 @@
 
 SAVEPOINT=$(ls -td $FLINK_HOME/mnt/save/*/ | head -1)
 
-if [-z $JOB_JAR]; then
+if [ -z $JOB_JAR ]; then
   echo "No job jar found. Nothing to start. "
-elif [-z $SAVEPOINT]; then
+elif [ -z $SAVEPOINT ]; then
   echo "No savepoint found, starting fresh; jar: $JOB_JAR, main: $MAIN_CLASS, slots: $NUM_SLOTS"
   $FLINK_HOME/bin/flink run -d -c $MAIN_CLASS -p $NUM_SLOTS $JOB_JAR
 else
