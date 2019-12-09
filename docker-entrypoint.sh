@@ -26,14 +26,20 @@ if [ "$1" == "--help" -o "$1" == "-h" ]; then
     echo "Usage: $(basename $0) (jobmanager|taskmanager)"
     exit 0
 elif [ "$1" == "jobmanager" ]; then
+
     echo "Starting Job Manager"
     sed -i -e "s/jobmanager.rpc.address: localhost/jobmanager.rpc.address: ${JOB_MANAGER_RPC_ADDRESS}/g" $FLINK_HOME/conf/flink-conf.yaml
 
-    exec $FLINK_HOME/bin/jobmanager.sh start-foreground
-
     if [ -f "$FLINK_HOME/mnt/start-job.sh" ]; then
+      echo "Restarting existing JobManager"
+      $FLINK_HOME/bin/jobmanager.sh start
+      /bin/sleep 5
       echo "Starting installed flink job..."
-      exec $FLINK_HOME/mnt/start-job.sh
+      $FLINK_HOME/mnt/start-job.sh start
+      exec /usr/bin/tail -f $FLINK_HOME/log/*.log
+    else
+      echo "Could not find $FLINK_HOME/mnt/start-job.sh"
+      exec $FLINK_HOME/bin/jobmanager.sh start
     fi
 elif [ "$1" == "taskmanager" ]; then
 
@@ -42,6 +48,9 @@ elif [ "$1" == "taskmanager" ]; then
 
     echo "Starting Task Manager"
     exec $FLINK_HOME/bin/taskmanager.sh start-foreground
+else
+  echo "this command needs an argument!"
+  echo "Usage: $(basename $0) (jobmanager|taskmanager)"
+  exit 0
 fi
 
-exec "$@"
