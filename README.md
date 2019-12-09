@@ -8,7 +8,7 @@ This is meant to be a base flink image that works for Kamaji
 
 * Changed config to turn on prometheus, and copied prometheus library from opt to lib
 * Prometheus port is set to 8090
-* Added a scripts directory which contains sripts for things like safely cancelling the current job
+* Added a scripts directory which contains scripts for things like safely cancelling the current job
 * Added NUM_SLOTS environment variable that controls slots per task machine (this is configurable from k8s)
 * Added ServiceMonitor resource to turn on prometheus scraping
 * Added taskmanager service to distinguish between jobmanager and taskmanager pods

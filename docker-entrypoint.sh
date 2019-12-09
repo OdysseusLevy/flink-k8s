@@ -49,8 +49,8 @@ elif [ "$1" == "taskmanager" ]; then
     echo "Starting Task Manager"
     exec $FLINK_HOME/bin/taskmanager.sh start-foreground
 else
-  echo "this command needs an argument!"
+  echo "This command needs an argument!"
   echo "Usage: $(basename $0) (jobmanager|taskmanager)"
-  exit 0
+  exit 1
 fi
 
