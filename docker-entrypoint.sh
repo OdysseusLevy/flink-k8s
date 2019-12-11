@@ -33,14 +33,17 @@ elif [ "$1" == "jobmanager" ]; then
     if [ -f "$FLINK_HOME/mnt/start-job.sh" ]; then
       echo "Restarting existing JobManager"
       $FLINK_HOME/bin/jobmanager.sh start
-      /bin/sleep 5
+      /bin/sleep 10
       echo "Starting installed flink job..."
       $FLINK_HOME/mnt/start-job.sh start
-      exec /usr/bin/tail -f $FLINK_HOME/log/*.log
+      echo "Tailing the logs"
+      exec /usr/bin/tail -f $FLINK_HOME/log/*.log   # Note the "exec". We do this to force the container to not simply finish (which looks like an error to k8s)
+                                                    # The tail outputs the flink logs to stdout to make k8s happy
     else
-      echo "Could not find $FLINK_HOME/mnt/start-job.sh"
-      exec $FLINK_HOME/bin/jobmanager.sh start
+      echo "Could not find $FLINK_HOME/mnt/start-job.sh. The flink job will need to be started manually"
+      exec $FLINK_HOME/bin/jobmanager.sh start-foreground
     fi
+
 elif [ "$1" == "taskmanager" ]; then
 
     sed -i -e "s/jobmanager.rpc.address: localhost/jobmanager.rpc.address: ${JOB_MANAGER_RPC_ADDRESS}/g" $FLINK_HOME/conf/flink-conf.yaml

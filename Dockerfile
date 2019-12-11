@@ -19,7 +19,7 @@
 FROM openjdk:8-jre-alpine
 
 # Install requirements
-RUN apk add --no-cache bash curl snappy libc6-compat && \
+RUN apk add --no-cache bash busybox-suid curl snappy libc6-compat && \
 ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2
 
 # Flink environment variables
