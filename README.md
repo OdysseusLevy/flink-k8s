@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is meant to be a base flink image that works for Kamaji
+Shows simple HA for flink using k8s and a pvc
 
 ## Changes from vanilla Flink
 
@@ -10,13 +10,14 @@ This is meant to be a base flink image that works for Kamaji
 * Prometheus port is set to 8090
 * Added a scripts directory which contains scripts for things like safely cancelling the current job
 * Added NUM_SLOTS environment variable that controls slots per task machine (this is configurable from k8s)
+* Added Persistent Volume Claim (pvc) to mnt store for the flink jar and to store saves across restarts
 * Added ServiceMonitor resource to turn on prometheus scraping
-* Added taskmanager service to distinguish between jobmanager and taskmanager pods
+* Added Taskmanager service to distinguish between jobmanager and taskmanager pods
 * Set blob.server.port to 6124 (default is random port and that doesn't work with the jobmanager service)
 * Use default hadoop libraries
 * Removed some docker compose complexity (we only use k8s)
 
-## Build information
+## k8 scripts
 
 The jenkins job is here:
 
