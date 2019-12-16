@@ -1,0 +1,13 @@
+namespace: flink-example
+resources:
+  - pvc.yaml
+  - jobmanager-deployment.yaml
+  - jobmanager-service.yaml
+  - taskmanager-deployment.yaml
+  - taskmanager-service.yaml
+vars:
+  - name: JOBMANAGER_SERVICE
+    objref:
+      kind: Service
+      name: flink-jobmanager
+      apiVersion: v1

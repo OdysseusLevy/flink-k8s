@@ -19,14 +19,13 @@
 FROM openjdk:8-jre-alpine
 
 # Install requirements
-RUN apk add --no-cache bash busybox-suid curl snappy libc6-compat && \
-ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2
+# busybox-suid lets us set up chron jobs manually on the box
+RUN apk add --no-cache bash busybox-suid curl snappy libc6-compat
 
 # Flink environment variables
 ENV FLINK_HOME /opt/flink
 ENV FLINK_DIST flink-1.8.1
 ENV NUM_SLOTS 2
-
 
 # Install build dependencies and flink
 ADD $FLINK_DIST /opt/$FLINK_DIST

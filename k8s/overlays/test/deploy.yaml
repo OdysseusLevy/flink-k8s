@@ -1,0 +1,181 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: flink-example-app
+    component: jobmanager
+    jobname: example-test
+  name: flink-jobmanager-test
+  namespace: flink-example
+spec:
+  ports:
+  - name: rpc
+    port: 6123
+  - name: blob
+    port: 6124
+  - name: query
+    port: 6125
+  - name: ui
+    port: 8081
+  - name: metrics
+    port: 8090
+  selector:
+    app: flink-example-app
+    component: jobmanager
+    jobname: example-test
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: flink-example-app
+    component: taskmanager
+    jobname: example-test
+  name: flink-taskmanager-test
+  namespace: flink-example
+spec:
+  ports:
+  - name: data
+    port: 6121
+  - name: rpc
+    port: 6122
+  - name: metrics
+    port: 8090
+  - name: query
+    port: 6125
+  selector:
+    app: flink-example-app
+    component: taskmanager
+    jobname: example-test
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    jobname: example-test
+  name: flink-jobmanager-test
+  namespace: flink-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flink-example-app
+      component: jobmanager
+      jobname: example-test
+  template:
+    metadata:
+      labels:
+        app: flink-example-app
+        billto: flink-example-Platform
+        component: jobmanager
+        jobname: example-test
+        kamaji.sie.sony.com/Application: flink-example-app
+        kamaji.sie.sony.com/Service: NetAds
+    spec:
+      containers:
+      - args:
+        - jobmanager
+        env:
+        - name: JOB_MANAGER_RPC_ADDRESS
+          value: flink-jobmanager-test
+        - name: JOB_JAR
+          value: $FLINK_HOME/mnt/example-events.jar
+        - name: NUM_SLOTS
+          value: "4"
+        image: kamaji-dtr.tools.kmb.sonynei.net/olevy/kamaji-flink:0.1.17
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - $FLINK_HOME/scripts/cancel-job.sh
+        name: jobmanager
+        ports:
+        - containerPort: 6123
+          name: rpc
+        - containerPort: 6124
+          name: blob
+        - containerPort: 6125
+          name: query
+        - containerPort: 8081
+          name: ui
+        - containerPort: 8090
+          name: prometheus
+        volumeMounts:
+        - mountPath: /opt/flink/mnt
+          name: mypd
+      securityContext:
+        fsGroup: 101
+      terminationGracePeriodSeconds: 60
+      volumes:
+      - name: mypd
+        persistentVolumeClaim:
+          claimName: example-gp2-storage-test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    jobname: example-test
+  name: flink-taskmanager-test
+  namespace: flink-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flink-example-app
+      component: taskmanager
+      jobname: example-test
+  template:
+    metadata:
+      labels:
+        app: flink-example-app
+        billto: flink-example-Platform
+        component: taskmanager
+        jobname: example-test
+        kamaji.sie.sony.com/Application: flink-example-app
+        kamaji.sie.sony.com/Service: NetAds
+    spec:
+      containers:
+      - args:
+        - taskmanager
+        env:
+        - name: JOB_MANAGER_RPC_ADDRESS
+          value: flink-jobmanager-test
+        - name: NUM_SLOTS
+          value: "4"
+        image: kamaji-dtr.tools.kmb.sonynei.net/olevy/kamaji-flink:0.1.17
+        name: taskmanager
+        ports:
+        - containerPort: 6121
+          name: data
+        - containerPort: 6122
+          name: rpc
+        - containerPort: 6125
+          name: query
+        - containerPort: 8090
+          name: metrics
+        resources:
+          limits:
+            cpu: "12"
+            memory: 4Gi
+          requests:
+            cpu: "8"
+            memory: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    jobname: example-test
+  name: example-gp2-storage-test
+  namespace: flink-example
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: gp2

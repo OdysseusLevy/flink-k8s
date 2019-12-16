@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flink-jobmanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flink-example-app
+      component: jobmanager
+  template:
+    metadata:
+      labels:
+        app: flink-example-app
+        component: jobmanager
+    spec:
+      securityContext: # We do this to set the group of the mounted directory to "flink"
+        fsGroup: 101
+      terminationGracePeriodSeconds: 60
+      containers:
+      - name: jobmanager
+        image: kamaji-dtr.tools.kmb.sonynei.net/raptor/kamaji-flink:1.0.20191211010338
+        volumeMounts:
+          - mountPath: "/opt/flink/mnt"
+            name: mypd
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "$FLINK_HOME/scripts/cancel-job.sh"]
+        args:
+        - jobmanager
+        ports:
+        - containerPort: 6123
+          name: rpc
+        - containerPort: 6124
+          name: blob
+        - containerPort: 6125
+          name: query
+        - containerPort: 8081
+          name: ui
+        - containerPort: 8090
+          name: prometheus
+        env:
+        - name: JOB_MANAGER_RPC_ADDRESS
+          value: $(JOBMANAGER_SERVICE)
+        - name: JOB_JAR
+          value: "$FLINK_HOME/mnt/flink-example.jar"
+        - name: NUM_SLOTS
+          value: "4"
+      volumes:
+        - name: mypd
+          persistentVolumeClaim:
+            claimName: example-gp2-storage

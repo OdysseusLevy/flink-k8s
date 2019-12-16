@@ -1,0 +1,8 @@
+nameSuffix: -test
+commonLabels:
+  jobname: k8s-test
+bases:
+  - ../../base
+replicas:
+  - name: flink-taskmanager
+    count: 1
